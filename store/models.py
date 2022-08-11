@@ -5,11 +5,17 @@ class Product(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(default='-')
     description = models.TextField()
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey("Collection", on_delete = models.PROTECT)
     promotions = models.ManyToManyField("Promotion")
+
+    def __str__(self) -> str:
+        return self.title
+
+    class Meta:
+        ordering = ['title']
 
 class Customer(models.Model):
 
@@ -36,6 +42,9 @@ class Customer(models.Model):
             models.Index(fields=['last_name', 'first_name'])
         ]
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
 class Order(models.Model):
     STATUS_PENDING = "P"
     STATUS_COMPLETE = "C"
@@ -57,12 +66,22 @@ class Address(models.Model):
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
+    featured_product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    def __str__(self) -> str:
+        return self.title
+
+    class Meta:
+        ordering = ['title']
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
+
+    def __str__(self) -> str:
+        return self.product
 
 class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
@@ -75,3 +94,6 @@ class CartItem(models.Model):
 class Promotion(models.Model):
     description = models.CharField(max_length=255)
     discount = models.FloatField()
+
+    def __str__(self) -> str:
+        return self.description

@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
-def calculate():
-    x = 1
-    y = 2
-    return x
+from store.models import Product
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 def say_hello(request):
-    x = calculate()
-    return render(request, 'hello.html', { 'name': 'Mosh'})
+
+    queryset = Product.objects.filter(price__range=(20,30))
+
+
+    return render(request, 'hello.html', { 'name': 'Mosh', 'products':list(queryset)})
