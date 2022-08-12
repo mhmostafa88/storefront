@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     #local
     'playground',
     'store',
+    'store_custom',
     'tags',
+    
 ]
 
 MIDDLEWARE = [
